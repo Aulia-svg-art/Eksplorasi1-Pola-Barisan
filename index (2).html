@@ -1,0 +1,183 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Eksplorasi Pola Suatu Barisan</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom, #e0f0ff, #ffffff);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .container {
+      padding: 20px;
+      max-width: 900px;
+      margin: auto;
+      display: none;
+    }
+    .container.active {
+      display: block;
+    }
+    h1, h2, p {
+      text-align: center;
+    }
+    .soal, .tabel-info {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+      box-shadow: 0px 3px 8px rgba(0,0,0,0.1);
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 10px;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #003366;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #003366;
+      color: white;
+    }
+    footer {
+      text-align: center;
+      background: #003366;
+      color: white;
+      padding: 10px;
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container active" id="slide1">
+  <h1>Eksplorasi Barisan Aritmetika</h1>
+  <p>Temukan pola barisan dari soal berikut!</p>
+  <div id="soal1"></div>
+  <div style="text-align:center;">
+    <button onclick="tampilSlide(2)">Lanjut ke Slide 2</button>
+  </div>
+</div>
+
+<div class="container" id="slide2">
+  <h1>Menentukan Suku Berikutnya</h1>
+  <p>Lanjutkan 3 suku berikutnya!</p>
+  <div id="soal2"></div>
+  <div style="text-align:center;">
+    <button onclick="tampilSlide(1)">Kembali ke Slide 1</button>
+    <button onclick="tampilSlide(3)">Lanjut ke Slide 3</button>
+  </div>
+</div>
+
+<div class="container" id="slide3">
+  <h1>Refleksi Barisan</h1>
+  <p>Beberapa barisan yang telah dieksplorasi adalah barisan aritmetika. Mana saja?</p>
+  <div style="text-align:center;">
+    <button onclick="document.getElementById('tabel').style.display='block'">Tampilkan Tabel</button>
+  </div>
+  <div id="tabel" style="display:none;">
+    <table>
+      <tr><th>Barisan Aritmetika</th><th>Non Aritmetika</th></tr>
+      <tr><td>5,10,15,20,25,30</td><td>3,6,12,24,48,96</td></tr>
+      <tr><td>100,95,90,85,80,75</td><td>2,5,10,17,26,37</td></tr>
+      <tr><td>2,4,6,8,10,12</td><td>1,4,9,16,25,36</td></tr>
+      <tr><td>7,14,21,28,35,42</td><td>1,1,2,3,5,8,13</td></tr>
+      <tr><td>9,18,27,36,45,54,63</td><td>-</td></tr>
+      <tr><td>20,18,16,14,12,10</td><td>-</td></tr>
+    </table>
+    <p style="margin-top:20px;">Apa ciri khusus barisan aritmetika?</p>
+  </div>
+  <div style="text-align:center;">
+    <button onclick="tampilSlide(2)">Kembali ke Slide 2</button>
+    <button onclick="selesai()">Selesai Eksplorasi</button>
+  </div>
+</div>
+
+<footer>Disusun oleh: Maulida Aulia (23030174163)</footer>
+
+<script>
+const soal1 = [
+  { soal: [5,10,15,20,25,30], jawaban: "+5" },
+  { soal: [100,95,90,85,80,75], jawaban: "-5" },
+  { soal: [3,6,12,24,48,96], jawaban: "×2" },
+  { soal: [2,5,10,17,26,37], jawaban: "+3,+5,+7" },
+  { soal: [1,4,9,16,25,36], jawaban: "Kuadrat" }
+];
+const soal2 = [
+  { soal: [2,4,6,8,10,12], jawaban: "14,16,18" },
+  { soal: [7,14,21,28,35,42], jawaban: "49,56,63" },
+  { soal: [1,1,2,3,5,8,13], jawaban: "21,34,55" },
+  { soal: [9,18,27,36,45,54,63], jawaban: "72,81,90" },
+  { soal: [20,18,16,14,12,10], jawaban: "8,6,4" }
+];
+
+function generateSoal(container, data, prefix) {
+  data.forEach((item, index) => {
+    container.innerHTML += `
+      <div class="soal">
+        <p><strong>Soal ${index+1}:</strong> ${item.soal.join(", ")}</p>
+        <input type="text" id="${prefix}${index}" placeholder="Jawaban...">
+        <button onclick="cekJawaban('${prefix}',${index},'${item.jawaban}')">Cek Jawaban</button>
+        <div id="feedback-${prefix}${index}" class="feedback"></div>
+      </div>`;
+  });
+}
+
+generateSoal(document.getElementById('soal1'), soal1, 'a');
+generateSoal(document.getElementById('soal2'), soal2, 'b');
+
+function cekJawaban(prefix, index, jawaban) {
+  const input = document.getElementById(prefix+index).value.trim().toLowerCase().replace(/\s/g,'');
+  const benar = jawaban.toLowerCase().replace(/\s/g,'');
+  const feedback = document.getElementById(`feedback-${prefix}${index}`);
+  if (input === benar) {
+    feedback.textContent = "✅ Bagus sekali!";
+    feedback.style.color = "green";
+  } else {
+    feedback.textContent = "❌ Ayo lebih teliti lagi!";
+    feedback.style.color = "red";
+  }
+}
+
+function tampilSlide(slide) {
+  document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
+  document.getElementById('slide' + slide).classList.add('active');
+}
+
+function selesai() {
+  alert("Terima kasih telah mengeksplorasi!"); 
+  window.location.href = "about:blank";
+}
+</script>
+
+</body>
+</html>
